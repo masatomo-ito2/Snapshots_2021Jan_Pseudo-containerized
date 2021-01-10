@@ -1,3 +1,3 @@
-# HashiCorp Snapshot Pseudo-containerised (Jan 2021)
+# HashiCorp Snapshot Pseudo-containerized (Jan 2021)
 
 TBC
