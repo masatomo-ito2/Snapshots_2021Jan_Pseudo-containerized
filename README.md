@@ -15,9 +15,11 @@
 4. Once `apply` finishes, go to `nomad` directory.
 
 	Run:
+
 ```
 . env_setup.sh
 ```
+
 	This script will set some environment variables necessary for consul and nomad to work.
 
 - NOMAD_ADDR
