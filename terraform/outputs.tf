@@ -15,5 +15,5 @@ output "private_ips_clients" {
 }
 
 output "consul_master_token" {
-	value = module.nomad-starter.consul_master_token
+  value = module.nomad-starter.consul_master_token
 }

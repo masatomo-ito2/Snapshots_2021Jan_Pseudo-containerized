@@ -23,6 +23,7 @@ type Resp struct {
 	Pid      string
 	PublicIP string
 	Version  string
+	//ImgSrc   string
 }
 
 // global variable
@@ -50,6 +51,7 @@ func respHandler(w http.ResponseWriter, r *http.Request) {
 		Pid:      strconv.Itoa(os.Getpid()),
 		PublicIP: string(public_ip),
 		Version:  os.Getenv("VERSION"),
+		//ImgSrc:   os.Getenv("IMG_SRC"),	
 	}
 
 	// Marshal user object back to json

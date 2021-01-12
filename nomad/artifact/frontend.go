@@ -22,18 +22,23 @@ type Resp struct {
 	Pid      string
 	PublicIP string
 	Version  string
+	//ImgSrc	 string
 }
 
 func returnWebPage(w http.ResponseWriter, r *http.Request) {
+
+	// obtain upstream URL from environment variable
+	url := os.Getenv("UPSTREAM_URL")
 
 	tpl := `
 <!DOCTYPE html>
 <html>
 <body>
+<!-- <img src="{{.ImgSrc}}"></img><br> -->
 <h1 style="color:{{.Color}};">Welcome to HashiCorp Snapshots app version <u>{{.Version}}</u>!</h1>
-<h1 style="color:{{.Color}};">Hey, I am <u>{{.Mode}}</u> app (Task ID=<u>{{.TaskId}}</u>) running at <u>{{.Addr}}</u></h1>
-<h1 style="color:{{.Color}};">My public IP is <u>{{.PublicIP}}</u>.</h1>
-<h1 style="color:{{.Color}};">My process ID is <u>{{.Pid}}</u>. Feel free to kill me, I come back anyway.</h1>
+<h1 style="color:{{.Color}};"><u>{{.Mode}}</u> Backend app {{.TaskId}}</u> is running at <u>{{.Addr}}</u>, which can be accessed via <u>` + url + `</u>.</h1>
+<h1 style="color:{{.Color}};">Backend public IP: <u>{{.PublicIP}}</u></h1>
+<h1 style="color:{{.Color}};">Backend process ID: <u>{{.Pid}}</u></h1>
 </body>
 </html>`
 
@@ -41,13 +46,10 @@ func returnWebPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Path: %s\n", r.URL.Path)
 	fmt.Printf("rawQuery: %s\n", r.URL.RawQuery)
 
-	// obtain upstream URL from environment variable
-	url := os.Getenv("UPSTREAM_URL")
-
 	// construqt http get request
-	request, err := http.NewRequest("GET", url+r.URL.Path, nil)
+	request, err := http.NewRequest("GET", url + r.URL.Path, nil)
 	if err != nil {
-		fmt.Fprint(w, "<html><body><h1>Query generation failed</h1></body></html>")
+		fmt.Fprintf(w, "<html><body><h1>Query generation failed</h1></body></html>")
 		log.Fatal(err)
 		return
 	}
@@ -64,7 +66,9 @@ func returnWebPage(w http.ResponseWriter, r *http.Request) {
 	// send a GET request
 	resp, err := client.Do(request)
 	if err != nil {
-		fmt.Fprint(w, "<html><body><h1>Connection blocked</h1></body></html>")
+		fmt.Fprintf(w, "<html><body><h1>Connection blocked</h1></body></html>")
+		println( "masatest" )
+		//println( err.Error() )
 		log.Fatal(err)
 		return
 	}

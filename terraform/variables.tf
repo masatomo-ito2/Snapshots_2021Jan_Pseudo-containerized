@@ -21,3 +21,7 @@ variable "servers" {
 variable "clients" {
   default = 2
 }
+
+variable "instance_type" {
+  default = "t2.large"
+}

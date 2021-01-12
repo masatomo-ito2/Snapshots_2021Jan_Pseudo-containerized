@@ -33,6 +33,7 @@ module "nomad-starter" {
   key_name              = var.key_name
   nomad_servers         = var.servers
   nomad_clients         = var.clients
+  instance_type         = var.instance_type
   enable_connect        = true # make sure "connect" is enabled
   public_ip             = true
 }
