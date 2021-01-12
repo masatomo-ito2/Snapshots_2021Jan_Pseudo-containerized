@@ -10,7 +10,7 @@
 
 3. Run `terraform apply`
 
-This apply creates Nomad and Consul server and clients.
+	This apply creates Nomad and Consul server and clients.
 
 4. Once `apply` finishes, go to `nomad` directory.
 Run 
