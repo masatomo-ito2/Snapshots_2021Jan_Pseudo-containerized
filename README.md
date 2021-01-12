@@ -13,11 +13,12 @@
 	This apply creates Nomad and Consul server and clients.
 
 4. Once `apply` finishes, go to `nomad` directory.
-Run 
+
+	Run:
 ```
 . env_setup.sh
 ```
-This script will set some environment variables necessary for consul and nomad to work.
+	This script will set some environment variables necessary for consul and nomad to work.
 
 - NOMAD_ADDR
 - CONSUL_ADDR
@@ -28,42 +29,42 @@ This script will set some environment variables necessary for consul and nomad t
 
 1. Go to `nomad/artifact` directory.
 
-There are 2 GO programs, frontend and backend.
-Frontend app requests backend app for some data and renders a webpage with data embedded.
+	There are 2 GO programs, frontend and backend.
+	Frontend app requests backend app for some data and renders a webpage with data embedded.
 
 2. Modify `Makefile`
 
-Please set S3 bucket and object to yours. This is where the artifacts will be stored.
+	Please set S3 bucket and object to yours. This is where the artifacts will be stored.
 
 3. Run `make` to build and deploy (s3 upload) your apps.
 
 ## Nomad job file
 
-4. Please change the `local.artifact` variable to your S3 path.
+1. Please change the `local.artifact` variable to your S3 path.
 
 ## Run the demo
 
-5. Submit job file to Nomad.
+1. Submit job file to Nomad.
 
 ```
 nomad job run run_front_back.nomad
 ```
 
-6. Nomad will deploy frontend and backend apps, and registers the app to Consul service catalog.
+2. Nomad will deploy frontend and backend apps, and registers the app to Consul service catalog.
 
-**you can access the Nomad UI at $NOMAD_ADDR**
+	**you can access the Nomad UI at $NOMAD_ADDR**
 
-7. Check consul's service catalog
+3. Check consul's service catalog
 
-**you can access the Consul UI at $CONSUL_HTTP_ADDR**
+	**you can access the Consul UI at $CONSUL_HTTP_ADDR**
 
-8. Once `frontend` service becomes healthy, run following script to get a frontend URL.
+4. Once `frontend` service becomes healthy, run following script to get a frontend URL.
 
 ```
 ./get_frontend_url.sh
 ```
 
-Access the URL to see your application.
+	Access the URL to see your application.
 
 ## Additional things to try
 
