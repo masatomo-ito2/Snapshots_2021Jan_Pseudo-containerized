@@ -6,13 +6,13 @@
 
 1. Go to `terraform` directory.
 
-1. Modifiy `variables.tf` to match your AWS settings
+2. Modifiy `variables.tf` to match your AWS settings
 
-1. Run `terraform apply`
+3. Run `terraform apply`
 
 This apply creates Nomad and Consul server and clients.
 
-1. Once `apply` finishes, go to `nomad` directory.
+4. Once `apply` finishes, go to `nomad` directory.
 Run 
 ```
 . env_setup.sh
@@ -31,33 +31,33 @@ This script will set some environment variables necessary for consul and nomad t
 There are 2 GO programs, frontend and backend.
 Frontend app requests backend app for some data and renders a webpage with data embedded.
 
-1. Modify `Makefile`
+2. Modify `Makefile`
 
 Please set S3 bucket and object to yours. This is where the artifacts will be stored.
 
-1. Run `make` to build and deploy (s3 upload) your apps.
+3. Run `make` to build and deploy (s3 upload) your apps.
 
 ## Nomad job file
 
-1. Please change the `local.artifact` variable to your S3 path.
+4. Please change the `local.artifact` variable to your S3 path.
 
 ## Run the demo
 
-1. Submit job file to Nomad.
+5. Submit job file to Nomad.
 
 ```
 nomad job run run_front_back.nomad
 ```
 
-1. Nomad will deploy frontend and backend apps, and registers the app to Consul service catalog.
+6. Nomad will deploy frontend and backend apps, and registers the app to Consul service catalog.
 
 **you can access the Nomad UI at $NOMAD_ADDR**
 
-1. Check consul's service catalog
+7. Check consul's service catalog
 
 **you can access the Consul UI at $CONSUL_HTTP_ADDR**
 
-1. Once `frontend` service becomes healthy, run following script to get a frontend URL.
+8. Once `frontend` service becomes healthy, run following script to get a frontend URL.
 
 ```
 ./get_frontend_url.sh
@@ -109,13 +109,13 @@ variable attrib_v2 {
 
 1. Go to `consul_config` directory.
 
-1. Examine L7 routing settings.
+2. Examine L7 routing settings.
 
 - service-defaults.hcl
 - service-resolver.hcl
 - service-router.hcl
 
-1. Run the script or commands to set the config
+3. Run the script or commands to set the config
 
 ```
 consul config write service-defaults.hcl
@@ -123,7 +123,7 @@ consul config write service-resolver.hcl
 consul config write service-router.hcl
 ```
 
-1. Additionally you can try splitter.
+4. Additionally you can try splitter.
 
 - service-splitter.hcl
 
