@@ -1,234 +1,234 @@
 locals {
-	mode     = "Legacy"
-	artifact = "https://hashicorpjp.s3.ap-northeast-1.amazonaws.com/masa/Snapshots2021Jan_Nomad/frontback.tgz"
-	# img_dir  = "https://hashicorpjp.s3-ap-northeast-1.amazonaws.com/masa/Snapshots2021Jan_Nomad/"
+  mode     = "Legacy"
+  artifact = "https://hashicorpjp.s3.ap-northeast-1.amazonaws.com/masa/Snapshots2021Jan_Nomad/frontback.tgz"
+  # img_dir  = "https://hashicorpjp.s3-ap-northeast-1.amazonaws.com/masa/Snapshots2021Jan_Nomad/"
 }
 
 variables {
-	frontend_port = 8080
-	upstream_port = 10000
+  frontend_port = 8080
+  upstream_port = 10000
 }
 
-variable attrib_v1 {
-	type = object({
-		version = string,
-		task_count = number,
-		text_color = string,
-	})
-	default = {
-		version = "v1",
-		task_count = 1,
-		text_color = "green",
-	}
+variable "attrib_v1" {
+  type = object({
+    version    = string,
+    task_count = number,
+    text_color = string,
+  })
+  default = {
+    version    = "v1",
+    task_count = 1,
+    text_color = "green",
+  }
 }
 
-variable attrib_v2 {
-	type = object({
-		version = string,
-		task_count = number,
-		text_color = string,
-	})
-	default = {
-		version = "v2",
-		task_count = 0,
-		text_color = "red",
-	}
+variable "attrib_v2" {
+  type = object({
+    version    = string,
+    task_count = number,
+    text_color = string,
+  })
+  default = {
+    version    = "v2",
+    task_count = 0,
+    text_color = "red",
+  }
 }
 
 job "frontback_job" {
 
-	region = "global"
+  region = "global"
 
-	datacenters = ["dc1"]
+  datacenters = ["dc1"]
 
-	type = "service"
+  type = "service"
 
-	#######################
-	#                     #
-	#      Backend v1     #
-	#                     #
-	#######################
+  #######################
+  #                     #
+  #      Backend v1     #
+  #                     #
+  #######################
 
-	group "backend_group_v1" {
+  group "backend_group_v1" {
 
-		count = var.attrib_v1["task_count"]
+    count = var.attrib_v1["task_count"]
 
-		network {
-			mode = "bridge"
-			port "http" {}
-		}
+    network {
+      mode = "bridge"
+      port "http" {}
+    }
 
-		service {
-			name = "backend"
-			port = "http"
+    service {
+      name = "backend"
+      port = "http"
 
-			connect {
-				sidecar_service {}
-			}
+      connect {
+        sidecar_service {}
+      }
 
-			meta {
-				version = var.attrib_v1["version"]
-			}
+      meta {
+        version = var.attrib_v1["version"]
+      }
 
-			check {
-				type     = "http"
-				path     = "/"
-				interval = "5s"
-				timeout  = "3s"
-			}
+      check {
+        type     = "http"
+        path     = "/"
+        interval = "5s"
+        timeout  = "3s"
+      }
 
-			tags = [
-				"Snapshots",
-				"Backend",
-				local.mode,
-				var.attrib_v1["version"]
-			]
-		}
+      tags = [
+        "Snapshots",
+        "Backend",
+        local.mode,
+        var.attrib_v1["version"]
+      ]
+    }
 
-		task "backend" {
+    task "backend" {
 
-			driver = "exec"
+      driver = "exec"
 
-			artifact {
-				source = local.artifact
-			}
+      artifact {
+        source = local.artifact
+      }
 
-			env {
-				COLOR     = var.attrib_v1[ "text_color" ]
-				MODE	  	= local.mode
-				TASK_ID		= "${NOMAD_ALLOC_INDEX}"
-				ADDR      = "${NOMAD_ADDR_http}"
-				PORT      = "${NOMAD_PORT_http}"
-				VERSION   = var.attrib_v1["version"]
-				# IMG_SRC		= "${local.img_dir}${var.attrib_v1["version"]}.png"
-			}
+      env {
+        COLOR   = var.attrib_v1["text_color"]
+        MODE    = local.mode
+        TASK_ID = NOMAD_ALLOC_INDEX
+        ADDR    = NOMAD_ADDR_http
+        PORT    = NOMAD_PORT_http
+        VERSION = var.attrib_v1["version"]
+        # IMG_SRC		= "${local.img_dir}${var.attrib_v1["version"]}.png"
+      }
 
-			config {
-						command = "backend"
-			}
+      config {
+        command = "backend"
+      }
 
-			resources {
-				memory = 32    # reserve 32 MB
-				cpu    = 100   # reserve 100 MHz
-			}
+      resources {
+        memory = 32  # reserve 32 MB
+        cpu    = 100 # reserve 100 MHz
+      }
 
-		}
+    }
 
-		reschedule {
-			delay = "10s"
-			delay_function = "constant"
-		}
-	}
-	
-	#######################
-	#                     #
-	#      Backend v2     #
-	#                     #
-	#######################
+    reschedule {
+      delay          = "10s"
+      delay_function = "constant"
+    }
+  }
 
-	group "backend_group_v2" {
+  #######################
+  #                     #
+  #      Backend v2     #
+  #                     #
+  #######################
 
-		count = var.attrib_v2["task_count"]
+  group "backend_group_v2" {
 
-		network {
-			mode = "bridge"
-			port "http" {}
-		}
+    count = var.attrib_v2["task_count"]
 
-		service {
-			name = "backend"
-			port = "http"
+    network {
+      mode = "bridge"
+      port "http" {}
+    }
 
-			connect {
-				sidecar_service {}
-			}
+    service {
+      name = "backend"
+      port = "http"
 
-			meta {
-				version = var.attrib_v2["version"]
-			}
+      connect {
+        sidecar_service {}
+      }
 
-			check {
-				type     = "http"
-				path     = "/"
-				interval = "5s"
-				timeout  = "3s"
-			}
+      meta {
+        version = var.attrib_v2["version"]
+      }
 
-			tags = [
-				"Snapshots",
-				"Backend",
-				local.mode,
-				var.attrib_v2["version"]
-			]
-		}
+      check {
+        type     = "http"
+        path     = "/"
+        interval = "5s"
+        timeout  = "3s"
+      }
 
-		task "backend" {
+      tags = [
+        "Snapshots",
+        "Backend",
+        local.mode,
+        var.attrib_v2["version"]
+      ]
+    }
 
-			driver = "exec"
+    task "backend" {
 
-			artifact {
-				source = local.artifact
-			}
+      driver = "exec"
 
-			env {
-				COLOR     = var.attrib_v2[ "text_color" ]
-				MODE	  	= local.mode
-				TASK_ID		= "${NOMAD_ALLOC_INDEX}"
-				ADDR      = "${NOMAD_ADDR_http}"
-				PORT      = "${NOMAD_PORT_http}"
-				VERSION   = var.attrib_v2["version"]
-				# IMG_SRC		= "${local.img_dir}${var.attrib_v2["version"]}.png"
-			}
+      artifact {
+        source = local.artifact
+      }
 
-			config {
-						command = "backend"
-			}
+      env {
+        COLOR   = var.attrib_v2["text_color"]
+        MODE    = local.mode
+        TASK_ID = NOMAD_ALLOC_INDEX
+        ADDR    = NOMAD_ADDR_http
+        PORT    = NOMAD_PORT_http
+        VERSION = var.attrib_v2["version"]
+        # IMG_SRC		= "${local.img_dir}${var.attrib_v2["version"]}.png"
+      }
 
-			resources {
-				memory = 32    # reserve 32 MB
-				cpu    = 100   # reserve 100 MHz
-			}
-		}
+      config {
+        command = "backend"
+      }
 
-		reschedule {
-			delay = "10s"
-			delay_function = "constant"
-		}
-	}
+      resources {
+        memory = 32  # reserve 32 MB
+        cpu    = 100 # reserve 100 MHz
+      }
+    }
 
-	######################
-	#                    #
-	#      Frontend      #
-	#                    #
-	######################
+    reschedule {
+      delay          = "10s"
+      delay_function = "constant"
+    }
+  }
 
-	group "frontend_group" {
+  ######################
+  #                    #
+  #      Frontend      #
+  #                    #
+  ######################
 
-		count = 1
+  group "frontend_group" {
 
-		network {
-			mode = "bridge"
-			port "http" {
-				static = var.frontend_port
-			}	
-		}
+    count = 1
 
-		service {
-			name = "frontend"
-			port = "http"
+    network {
+      mode = "bridge"
+      port "http" {
+        static = var.frontend_port
+      }
+    }
 
-			connect {
-				sidecar_service {
-					proxy {
-						upstreams {
-							destination_name = "backend"
-							local_bind_port  = var.upstream_port
-						}
-					}
-				}
-			}
+    service {
+      name = "frontend"
+      port = "http"
 
-			/*
+      connect {
+        sidecar_service {
+          proxy {
+            upstreams {
+              destination_name = "backend"
+              local_bind_port  = var.upstream_port
+            }
+          }
+        }
+      }
+
+      /*
 			check {
 				type     = "http"
 				path     = "/"
@@ -236,41 +236,41 @@ job "frontback_job" {
 				timeout  = "3s"
 			}
 			*/
-			
-			tags = [
-				local.mode,
-				"Snapshots",
-				"Frontend"
-			]
-		}
 
-		task "frontend" {
+      tags = [
+        local.mode,
+        "Snapshots",
+        "Frontend"
+      ]
+    }
 
-		driver = "exec"
+    task "frontend" {
 
-			artifact {
-				source = local.artifact
-			}
+      driver = "exec"
 
-			env {
-				PORT      		= "${NOMAD_PORT_http}"
-				UPSTREAM_URL	= "http://${NOMAD_UPSTREAM_ADDR_backend}"
-			}
+      artifact {
+        source = local.artifact
+      }
 
-			config {
-						command = "frontend"
-			}
-					
-			resources {
-				memory = 32    # reserve 32 MB
-				cpu    = 100   # reserve 100 MHz
-			}
+      env {
+        PORT         = NOMAD_PORT_http
+        UPSTREAM_URL = "http://${NOMAD_UPSTREAM_ADDR_backend}"
+      }
 
-		}
+      config {
+        command = "frontend"
+      }
 
-		reschedule {
-			delay = "10s"
-			delay_function = "constant"
-		}
-	}
+      resources {
+        memory = 32  # reserve 32 MB
+        cpu    = 100 # reserve 100 MHz
+      }
+
+    }
+
+    reschedule {
+      delay          = "10s"
+      delay_function = "constant"
+    }
+  }
 }
